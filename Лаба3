@@ -1,0 +1,59 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
+// Функція для конвертації шістнадцяткової цифри в десяткове значення
+int hex_to_int(char c) {
+    if (c >= '0' && c <= '9') {
+        return c - '0';
+    }
+    if (c >= 'a' && c <= 'f') {
+        return c - 'a' + 10;
+    }
+    return c - 'A' + 10;
+}
+
+// Функція для перетворення рядка шістнадцяткових цифр в масив байтів
+void hex_to_bytes(const char* hex, unsigned char* bytes, int len) {
+    for (int i = 0; i < len / 2; i++) {
+        bytes[i] = (hex_to_int(hex[2 * i]) << 4) | hex_to_int(hex[2 * i + 1]);
+    }
+}
+
+int main() {
+    char message_1[501];
+    char message_2[501];
+    char message_3[501];
+
+    // Зчитуємо вхідні повідомлення
+    scanf("%[^\n]", message_1); fgetc(stdin);
+    scanf("%[^\n]", message_2); fgetc(stdin);
+    scanf("%[^\n]", message_3);
+
+    // Визначаємо довжину повідомлень у байтах
+    int len = strlen(message_1) / 2;
+
+    // Масиви для зберігання байтів повідомлень
+    unsigned char m1[250], m2[250], m3[250];
+
+    // Перетворюємо повідомлення з шістнадцяткового формату в байти
+    hex_to_bytes(message_1, m1, strlen(message_1));
+    hex_to_bytes(message_2, m2, strlen(message_2));
+    hex_to_bytes(message_3, m3, strlen(message_3));
+
+    // Масив для відновленого повідомлення
+    unsigned char original_message[250];
+
+    // Відновлюємо оригінальне повідомлення за допомогою XOR
+    for (int i = 0; i < len; i++) {
+        original_message[i] = m2[i] ^ m1[i] ^ m3[i];
+    }
+
+    // Виводимо оригінальне повідомлення як ASCII рядок
+    for (int i = 0; i < len; i++) {
+        printf("%c", original_message[i]);
+    }
+    printf("\n");
+
+    return 0;
+}
